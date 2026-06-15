@@ -1,0 +1,20 @@
+spring:
+  datasource:
+    url: jdbc:mysql://localhost:3306/leave_management_db?createDatabaseIfNotExist=true&useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
+    username: root
+    password: password
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQLDialect
+        format_sql: true
+
+app:
+  jwt:
+    # 256-bit HS256 key
+    secret: 9a4f2c8d3b7a1e5f8g2h6j3k9l0m7n4p1q5r8s2t6u9v3w0x7y4z1a2b3c4d5e6f
+    expiration-ms: 86400000 # 24 hours
