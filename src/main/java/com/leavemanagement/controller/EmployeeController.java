@@ -1,7 +1,6 @@
 package com.leavemanagement.controller;
 
 import com.leavemanagement.dto.EmployeeDto;
-import com.leavemanagement.entity.Employee;
 import com.leavemanagement.service.EmployeeService;
 import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
@@ -25,26 +24,26 @@ public class EmployeeController {
 
     @PostMapping
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<Employee> createEmployee(@Valid @RequestBody EmployeeDto dto) {
-        Employee created = employeeService.createEmployee(dto);
+    public ResponseEntity<EmployeeDto> createEmployee(@Valid @RequestBody EmployeeDto dto) {
+        EmployeeDto created = employeeService.createEmployee(dto);
         return new ResponseEntity<>(created, HttpStatus.CREATED);
     }
 
     @PutMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<Employee> updateEmployee(@PathVariable Long id, @Valid @RequestBody EmployeeDto dto) {
-        Employee updated = employeeService.updateEmployee(id, dto);
+    public ResponseEntity<EmployeeDto> updateEmployee(@PathVariable Long id, @Valid @RequestBody EmployeeDto dto) {
+        EmployeeDto updated = employeeService.updateEmployee(id, dto);
         return ResponseEntity.ok(updated);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Employee> getEmployeeById(@PathVariable Long id) {
-        Employee employee = employeeService.getEmployeeById(id);
+    public ResponseEntity<EmployeeDto> getEmployeeById(@PathVariable Long id) {
+        EmployeeDto employee = employeeService.getEmployeeById(id);
         return ResponseEntity.ok(employee);
     }
 
     @GetMapping
-    public ResponseEntity<Page<Employee>> getAllEmployees(
+    public ResponseEntity<Page<EmployeeDto>> getAllEmployees(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,
             @RequestParam(defaultValue = "id") String sortBy,
@@ -64,7 +63,7 @@ public class EmployeeController {
     }
 
     @GetMapping("/search")
-    public ResponseEntity<Page<Employee>> searchEmployees(
+    public ResponseEntity<Page<EmployeeDto>> searchEmployees(
             @RequestParam(required = false) String name,
             @RequestParam(required = false) String department,
             @RequestParam(required = false) String email,
@@ -76,7 +75,7 @@ public class EmployeeController {
         Sort sort = sortDir.equalsIgnoreCase(Sort.Direction.ASC.name()) ? 
                 Sort.by(sortBy).ascending() : Sort.by(sortBy).descending();
         Pageable pageable = PageRequest.of(page, size, sort);
-        Page<Employee> results = employeeService.searchEmployees(name, department, email, pageable);
+        Page<EmployeeDto> results = employeeService.searchEmployees(name, department, email, pageable);
         return ResponseEntity.ok(results);
     }
 }

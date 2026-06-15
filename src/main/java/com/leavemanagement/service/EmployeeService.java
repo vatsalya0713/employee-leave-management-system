@@ -24,7 +24,7 @@ public class EmployeeService {
     }
 
     @Transactional
-    public Employee createEmployee(EmployeeDto dto) {
+    public EmployeeDto createEmployee(EmployeeDto dto) {
         Employee employee = Employee.builder()
                 .employeeCode(dto.getEmployeeCode())
                 .name(dto.getName())
@@ -34,11 +34,12 @@ public class EmployeeService {
                 .joiningDate(dto.getJoiningDate())
                 .leaveBalance(dto.getLeaveBalance() != null ? dto.getLeaveBalance() : 21)
                 .build();
-        return employeeRepository.save(employee);
+        Employee saved = employeeRepository.save(employee);
+        return mapToDto(saved);
     }
 
     @Transactional
-    public Employee updateEmployee(Long id, EmployeeDto dto) {
+    public EmployeeDto updateEmployee(Long id, EmployeeDto dto) {
         Employee employee = employeeRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Employee", "id", id));
         
@@ -50,16 +51,18 @@ public class EmployeeService {
         if (dto.getLeaveBalance() != null) {
             employee.setLeaveBalance(dto.getLeaveBalance());
         }
-        return employeeRepository.save(employee);
+        Employee saved = employeeRepository.save(employee);
+        return mapToDto(saved);
     }
 
-    public Employee getEmployeeById(Long id) {
-        return employeeRepository.findById(id)
+    public EmployeeDto getEmployeeById(Long id) {
+        Employee employee = employeeRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Employee", "id", id));
+        return mapToDto(employee);
     }
 
-    public Page<Employee> getAllEmployees(Pageable pageable) {
-        return employeeRepository.findAll(pageable);
+    public Page<EmployeeDto> getAllEmployees(Pageable pageable) {
+        return employeeRepository.findAll(pageable).map(this::mapToDto);
     }
 
     @Transactional
@@ -70,7 +73,7 @@ public class EmployeeService {
     }
 
     // Search employees dynamically using JPA Specification
-    public Page<Employee> searchEmployees(String name, String department, String email, Pageable pageable) {
+    public Page<EmployeeDto> searchEmployees(String name, String department, String email, Pageable pageable) {
         Specification<Employee> spec = (root, query, criteriaBuilder) -> {
             List<Predicate> predicates = new ArrayList<>();
             
@@ -87,6 +90,19 @@ public class EmployeeService {
             return criteriaBuilder.and(predicates.toArray(new Predicate[0]));
         };
         
-        return employeeRepository.findAll(spec, pageable);
+        return employeeRepository.findAll(spec, pageable).map(this::mapToDto);
+    }
+
+    private EmployeeDto mapToDto(Employee employee) {
+        return EmployeeDto.builder()
+                .id(employee.getId())
+                .employeeCode(employee.getEmployeeCode())
+                .name(employee.getName())
+                .email(employee.getEmail())
+                .department(employee.getDepartment())
+                .designation(employee.getDesignation())
+                .joiningDate(employee.getJoiningDate())
+                .leaveBalance(employee.getLeaveBalance())
+                .build();
     }
 }

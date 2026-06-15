@@ -1,7 +1,7 @@
 package com.leavemanagement.controller;
 
+import com.leavemanagement.dto.EmployeeDto;
 import com.leavemanagement.dto.LeaveResponseDto;
-import com.leavemanagement.entity.Employee;
 import com.leavemanagement.service.EmployeeService;
 import com.leavemanagement.service.LeaveRequestService;
 import org.springframework.data.domain.Page;
@@ -26,7 +26,7 @@ public class AdminController {
     }
 
     @GetMapping("/employees")
-    public ResponseEntity<Page<Employee>> getAllEmployees(
+    public ResponseEntity<Page<EmployeeDto>> getAllEmployees(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,
             @RequestParam(defaultValue = "id") String sortBy,
